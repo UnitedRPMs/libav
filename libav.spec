@@ -12,7 +12,7 @@ Group:          Productivity/Multimedia/Video/Editors and Convertors
 Url:            http://libav.org
 Source:         libav-%{version}-%{snapshot}.tar.xz
 Source1:	libav-snapshot.sh
-License:        GPL-2.0+
+License:        GPLv2
 BuildRequires:	yasm-devel
 BuildRequires:	make
 BuildRequires:  pkgconfig
@@ -53,7 +53,8 @@ Requires:       libav-libs = %{version}-%{release}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 %description
-Libav is a complete, cross-platform solution to record, convert and stream audio and video. It includes libavcodec - the leading audio/video codec library.
+Libav is a complete, cross-platform solution to record, convert and stream 
+audio and video. It includes libavcodec - the leading audio/video codec library
 
 %package        libs
 Summary:        Libraries for libav
