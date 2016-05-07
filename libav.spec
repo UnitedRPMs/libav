@@ -4,9 +4,12 @@
 %global snapshot %{gitdate}-%{gitversion}
 %global gver .%{gitdate}git%{gitversion}
 
+
+%bcond_with opencv
+
 Name:           libav
 Version:        11.6
-Release: 	1%{?gver}%{?dist}
+Release: 	2%{?gver}%{?dist}
 Summary:        Cross-platform solution to record, convert and stream audio/video
 Group:          Productivity/Multimedia/Video/Editors and Convertors
 Url:            http://libav.org
@@ -33,7 +36,9 @@ BuildRequires:  gsm-devel
 BuildRequires:	ilbc-devel
 BuildRequires:  lame-devel >= 3.98.3
 BuildRequires: 	opencore-amr-devel vo-amrwbenc-devel
-BuildRequires:	opencv-devel
+%if %{with opencv}
+BuildRequires: 	pkgconfig(opencv)
+%endif
 BuildRequires:  openjpeg-devel
 BuildRequires:  opus-devel
 BuildRequires:	pulseaudio-libs-devel
@@ -101,7 +106,9 @@ Libav is a complete, cross-platform solution to record, convert and stream audio
 	--enable-libmp3lame \
 	--enable-libopencore-amrnb \
 	--enable-libopencore-amrwb \
-	--enable-libopencv \
+%if %{with opencv}
+    	--enable-libopencv \
+%endif
 	--enable-libopenjpeg \
 	--enable-libopus \
 	--enable-libpulse \
@@ -215,6 +222,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+
+* Fri May 06 2016 David Vásquez <davidjeremias82 AT gmail DOT com> 11.6-2-20160421-d0c0a42-
+- Added conditional build for opencv
 
 * Thu Apr 21 2016 David Vásquez <davidjeremias82 AT gmail DOT com> 11.6-20160421-d0c0a42-1
 - Updated to 11.6-20160421-d0c0a42
