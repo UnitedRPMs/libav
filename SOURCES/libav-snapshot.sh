@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tag_name=v11.6
+tag_name=v11.7
 
 set -x
 

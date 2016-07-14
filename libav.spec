@@ -1,6 +1,6 @@
-#globals for libav-11.6-20160421-d0c0a42.tar.xz
-%global gitdate 20160421
-%global gitversion d0c0a42
+#globals for libav-11.7-20160711-0fc667e.tar.xz
+%global gitdate 20160711
+%global gitversion 0fc667e
 %global snapshot %{gitdate}-%{gitversion}
 %global gver .%{gitdate}git%{gitversion}
 
@@ -8,8 +8,8 @@
 %bcond_with opencv
 
 Name:           libav
-Version:        11.6
-Release: 	2%{?gver}%{?dist}
+Version:        11.7
+Release: 	1%{?gver}%{?dist}
 Summary:        Cross-platform solution to record, convert and stream audio/video
 Group:          Productivity/Multimedia/Video/Editors and Convertors
 Url:            http://libav.org
@@ -223,11 +223,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
-* Fri May 06 2016 David Vásquez <davidjeremias82 AT gmail DOT com> 11.6-2-20160421-d0c0a42-
+* Fri Jul 08 2016 David Vásquez <davidjeremias82 AT gmail DOT com> - 11.7-1-20160711git0fc667e
+- Updated to 11.7-20160711git0fc667e
+
+* Fri May 06 2016 David Vásquez <davidjeremias82 AT gmail DOT com> 11.6-2-20160421gitd0c0a42
 - Added conditional build for opencv
 
-* Thu Apr 21 2016 David Vásquez <davidjeremias82 AT gmail DOT com> 11.6-20160421-d0c0a42-1
+* Thu Apr 21 2016 David Vásquez <davidjeremias82 AT gmail DOT com> 11.6-1-20160421gitd0c0a42
 - Updated to 11.6-20160421-d0c0a42
 
-* Mon Feb 22 2016 David Vasquez <davidjeremias82[AT]gmail [DOT] com> - 11.4-20160223-0069d45-1
+* Mon Feb 22 2016 David Vasquez <davidjeremias82[AT]gmail [DOT] com> - 11.4-1-20160223git0069d45
 - Initial package of libav 11.4-20160223-0069d45
