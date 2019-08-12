@@ -60,6 +60,7 @@ audio and video. It includes libavcodec - the leading audio/video codec library
 
 %package        libs
 Summary:        Libraries for libav
+Conflicts:	ffmpeg-libs >= 4.0
 Recommends:	libavresample = %{version}-%{release}
 
 %description    libs
@@ -71,22 +72,23 @@ Summary:         libavresample Libraries
 %description    -n libavresample
 This package contains the libraries of libavresample.
 
-%package devel
+%package 	devel
 Summary:        Cross-platform to record, convert, stream media files - Devel package
 Group:          Development/Libraries/Other
 Requires:       libav = %{version}-%{release}
 Requires:       libavresample-devel = %{version}-%{release}
+Conflicts:	ffmpeg-devel >= 4.0
 
-%description devel
+%description 	devel
 Libav is a complete, cross-platform solution to record, convert and stream audio and video.
 
-%package -n libavresample-devel
+%package 	-n libavresample-devel
 Summary:        Devel libavresample libraries
 Group:          Development/Libraries/Other
 Requires:       libavresample = %{version}-%{release}
 
 
-%description -n libavresample-devel
+%description 	-n libavresample-devel
 This package contains the devel libraries of libavresample.
 
 %prep
