@@ -1,25 +1,18 @@
-#globals for libav-11.7-20160711-0fc667e.tar.xz
-%global gitdate 20160711
-%global gitversion 0fc667e
-%global snapshot %{gitdate}-%{gitversion}
-%global gver .%{gitdate}git%{gitversion}
-
-
+%global commit c4642788e83b0858bca449f9b6e71ddb015dfa5d
 %bcond_with opencv
 
 Name:           libav
-Version:        11.7
-Release: 	1%{?gver}%{?dist}
+Version:        12.3
+Release: 	1%{?dist}
 Summary:        Cross-platform solution to record, convert and stream audio/video
 Group:          Productivity/Multimedia/Video/Editors and Convertors
 Url:            http://libav.org
-Source:         libav-%{version}-%{snapshot}.tar.xz
-Source1:	libav-snapshot.sh
+Source:         https://github.com/archive/%{commit}.tar.gz
 License:        GPLv2
+
+BuildRequires:  gcc
 BuildRequires:	yasm-devel
 BuildRequires:	make
-BuildRequires:  pkgconfig
-BuildRequires:	git
 BuildRequires:	openssl-devel
 BuildRequires:	libva-devel >= 0.31.0
 BuildRequires:	libvdpau-devel
@@ -29,8 +22,8 @@ BuildRequires:  gnutls-devel
 BuildRequires:	libbs2b-devel
 BuildRequires: 	libcdio-paranoia-devel
 BuildRequires:  libdc1394-devel
-BuildRequires: 	faac-devel
-BuildRequires:	fdk-aac-devel
+#BuildRequires: faac-devel
+BuildRequires:	fdk-aac-free-devel
 BuildRequires:  freetype-devel
 BuildRequires:  gsm-devel
 BuildRequires:	ilbc-devel
@@ -54,6 +47,10 @@ BuildRequires:	x265-devel
 BuildRequires:  xvidcore-devel
 BuildRequires:	libXext-devel
 BuildRequires:	libXfixes-devel
+BuildRequires:	libdav1d-devel >= 0.4.0
+BuildRequires:  jack-audio-connection-kit-devel
+#BuildRequires:	libvpx-devel 
+BuildRequires:  SDL-devel podman
 Requires:       libav-libs = %{version}-%{release}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
@@ -63,28 +60,50 @@ audio and video. It includes libavcodec - the leading audio/video codec library
 
 %package        libs
 Summary:        Libraries for libav
+Requires:       libavresample = %{version}-%{release}
 
 %description    libs
 This package contains the libraries for libav.
+
+%package        -n libavresample
+Summary:         libavresample Libraries
+
+%description    -n libavresample
+This package contains the libraries of libavresample.
 
 %package devel
 Summary:        Cross-platform to record, convert, stream media files - Devel package
 Group:          Development/Libraries/Other
 Requires:       libav = %{version}-%{release}
-
+Requires:       libavresample-devel = %{version}-%{release}
 
 %description devel
 Libav is a complete, cross-platform solution to record, convert and stream audio and video.
 
+%package -n libavresample-devel
+Summary:        Devel libavresample libraries
+Group:          Development/Libraries/Other
+Requires:       libavresample = %{version}-%{release}
+
+
+%description -n libavresample-devel
+This package contains the devel libraries of libavresample.
+
 %prep
-%setup -n libav
+%autosetup -n libav-%{commit} 
+
+export CFLAGS='%{optflags}'
 
 ./configure \
 	--prefix=/usr \
-	--libdir=%{_libdir}/libav  \
-	--shlibdir=%{_libdir}/libav  \
-	--enable-debug \
+	--libdir=%{_libdir}  \
+	--shlibdir=%{_libdir}  \
+	--enable-doc \
+	--enable-avplay \
+	--disable-debug \
+	--disable-static \
 	--enable-shared \
+	--enable-runtime-cpudetect \
 	--enable-openssl \
 	--enable-nonfree \
 	--enable-gpl \
@@ -93,12 +112,9 @@ Libav is a complete, cross-platform solution to record, convert and stream audio
 	--enable-vaapi \
 	--enable-bzlib \
 	--enable-frei0r \
-	--enable-gnutls \
 	--enable-libbs2b \
 	--enable-libcdio \
 	--enable-libdc1394 \
-	--enable-libfaac \
-	--enable-libfdk-aac \
 	--enable-libfdk-aac \
 	--enable-libfreetype \
 	--enable-libgsm \
@@ -122,23 +138,23 @@ Libav is a complete, cross-platform solution to record, convert and stream audio
 	--enable-libvorbis \
 	--enable-libx264 \
 	--enable-libx265 \
+	--enable-libdav1d \
+	--enable-libjack \
 	--enable-libxvid \
-	--enable-x11grab
+	--extra-cflags='%{optflags}' --optflags='%{optflags}' \
+	--enable-pic
 
 %build
-make
+%make_build V=0
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
-
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
+%make_install V=0
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
+%{_bindir}/avplay
 %{_bindir}/avconv
 %{_bindir}/avprobe
 %{_datadir}/avconv/libvpx-1080p.avpreset
@@ -176,52 +192,52 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/avconv/libx264-veryfast_firstpass.avpreset
 %{_datadir}/avconv/libx264-veryslow.avpreset
 %{_datadir}/avconv/libx264-veryslow_firstpass.avpreset
+%{_mandir}/man1/avplay.1.gz
 %{_mandir}/man1/avconv.1.gz
 %{_mandir}/man1/avprobe.1.gz
 
 %files libs
-%{_libdir}/libav/libavcodec.so
-%{_libdir}/libav/libavcodec.so.56
-%{_libdir}/libav/libavcodec.so.56.1.0
-%{_libdir}/libav/libavdevice.so
-%{_libdir}/libav/libavdevice.so.55
-%{_libdir}/libav/libavdevice.so.55.0.0
-%{_libdir}/libav/libavfilter.so
-%{_libdir}/libav/libavfilter.so.5
-%{_libdir}/libav/libavfilter.so.5.0.0
-%{_libdir}/libav/libavformat.so
-%{_libdir}/libav/libavformat.so.56
-%{_libdir}/libav/libavformat.so.56.1.0
-%{_libdir}/libav/libavresample.so
-%{_libdir}/libav/libavresample.so.2
-%{_libdir}/libav/libavresample.so.2.1.0
-%{_libdir}/libav/libavutil.so
-%{_libdir}/libav/libavutil.so.54
-%{_libdir}/libav/libavutil.so.54.3.0
-%{_libdir}/libav/libswscale.so
-%{_libdir}/libav/libswscale.so.3
-%{_libdir}/libav/libswscale.so.3.0.0
+%{_libdir}/libavcodec.so.*
+%{_libdir}/libavdevice.so.*
+%{_libdir}/libavfilter.so.*
+%{_libdir}/libavformat.so.*
+%{_libdir}/libavutil.so.*
+%{_libdir}/libswscale.so.*
+
+%files -n libavresample
+%{_libdir}/libavresample.so.*
 
 %files devel
-%{_libdir}/libav/pkgconfig/libavcodec.pc
-%{_libdir}/libav/pkgconfig/libavdevice.pc
-%{_libdir}/libav/pkgconfig/libavfilter.pc
-%{_libdir}/libav/pkgconfig/libavformat.pc
-%{_libdir}/libav/pkgconfig/libavresample.pc
-%{_libdir}/libav/pkgconfig/libavutil.pc
-%{_libdir}/libav/pkgconfig/libswscale.pc
-%{_libdir}/libav/libav*.a
-%{_libdir}/libav/libswscale.a
+%{_libdir}/libavcodec.so
+%{_libdir}/libavdevice.so
+%{_libdir}/libavfilter.so
+%{_libdir}/libavformat.so
+%{_libdir}/libavutil.so
+%{_libdir}/libswscale.so
+%{_libdir}/pkgconfig/libavcodec.pc
+%{_libdir}/pkgconfig/libavdevice.pc
+%{_libdir}/pkgconfig/libavfilter.pc
+%{_libdir}/pkgconfig/libavformat.pc
+%{_libdir}/pkgconfig/libavutil.pc
+%{_libdir}/pkgconfig/libswscale.pc
 %{_includedir}/libavcodec/
 %{_includedir}/libavdevice/
 %{_includedir}/libavfilter/
 %{_includedir}/libavformat/
-%{_includedir}/libavresample/
 %{_includedir}/libavutil/
 %{_includedir}/libswscale/
 
+%files -n libavresample-devel
+%{_libdir}/libavresample.so
+%{_includedir}/libavresample/
+%{_libdir}/pkgconfig/libavresample.pc
+
 
 %changelog
+
+* Sat Aug 10 2019 Unitedrpms Project <unitedrpms AT protonmail DOT com> 12.3-1
+- Updated to 12.3
+- libavresample package
 
 * Fri Jul 08 2016 David Vásquez <davidjeremias82 AT gmail DOT com> - 11.7-1-20160711git0fc667e
 - Updated to 11.7-20160711git0fc667e
