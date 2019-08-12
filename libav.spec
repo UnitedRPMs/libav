@@ -60,7 +60,7 @@ audio and video. It includes libavcodec - the leading audio/video codec library
 
 %package        libs
 Summary:        Libraries for libav
-Requires:       libavresample = %{version}-%{release}
+Recommends:	libavresample = %{version}-%{release}
 
 %description    libs
 This package contains the libraries for libav.
