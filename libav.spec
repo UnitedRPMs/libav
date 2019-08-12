@@ -7,7 +7,7 @@ Release: 	1%{?dist}
 Summary:        Cross-platform solution to record, convert and stream audio/video
 Group:          Productivity/Multimedia/Video/Editors and Convertors
 Url:            http://libav.org
-Source:         https://github.com/archive/%{commit}.tar.gz
+Source:         https://github.com/libav/libav/archive/%{commit}.tar.gz
 License:        GPLv2
 
 BuildRequires:  gcc
