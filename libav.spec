@@ -1,9 +1,11 @@
 %global commit c4642788e83b0858bca449f9b6e71ddb015dfa5d
 %bcond_with opencv
 
+%global _lto_cflags %{nil}
+
 Name:           libav
 Version:        12.3
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:        Cross-platform solution to record, convert and stream audio/video
 Group:          Productivity/Multimedia/Video/Editors and Convertors
 Url:            http://libav.org
@@ -35,6 +37,9 @@ BuildRequires: 	pkgconfig(opencv)
 BuildRequires:  openjpeg-devel
 BuildRequires:  opus-devel
 BuildRequires:	pulseaudio-libs-devel
+%if 0%{?fedora} >= 35
+BuildRequires:	libpulsecommon-15.0.so
+%endif
 BuildRequires:	librtmp-devel
 BuildRequires:  schroedinger-devel
 BuildRequires:  speex-devel
@@ -42,7 +47,7 @@ BuildRequires:  libtheora-devel
 BuildRequires:	twolame-devel
 BuildRequires:	vo-aacenc-devel
 BuildRequires:  libvorbis-devel
-BuildRequires:	x264-devel >= 0.0.0-0.31
+BuildRequires:	x264-devel >= 1:0.163
 BuildRequires:	x265-devel
 BuildRequires:  xvidcore-devel
 BuildRequires:	libXext-devel
@@ -95,6 +100,7 @@ This package contains the devel libraries of libavresample.
 %autosetup -n libav-%{commit} 
 
 export CFLAGS='%{optflags}'
+sed -i "s|check_host_cflags -O3|check_host_cflags %{optflags}|" configure
 
 ./configure \
 	--prefix=/usr \
@@ -236,6 +242,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+
+* Thu Feb 10 2022 Unitedrpms Project <unitedrpms AT protonmail DOT com> 12.3-2
+- Rebuilt for x264
 
 * Sat Aug 10 2019 Unitedrpms Project <unitedrpms AT protonmail DOT com> 12.3-1
 - Updated to 12.3
